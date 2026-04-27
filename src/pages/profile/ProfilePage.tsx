@@ -1,55 +1,54 @@
-import { LogOut, User } from "lucide-react";
+import { LogOut, User, Gamepad2, Database } from "lucide-react";
 
 export function ProfilePage() {
+  const username = localStorage.getItem("username") || "Jugador";
+  const userId = localStorage.getItem("usuario_id") || "---";
+
+  const handleLogout = () => {
+    localStorage.clear();
+    window.location.href = "/login";
+  };
+
   return (
-    <div className="flex w-full flex-col gap-4">
-      <section className="rounded-2xl border-2 border-slate-800 bg-slate-900 p-4">
-        <div className="space-y-2">
-          <p className="text-sm font-bold tracking-[0.3em] text-slate-400 uppercase">
-            Perfil
-          </p>
-          <h1 className="text-2xl font-bold text-white">Gestión de usuario</h1>
-          <p className="max-w-2xl text-slate-400">
-            Esta sección mostrará y gestionará los datos de la cuenta cuando se
-            implemente el sistema de inicio y cierre de sesión.
-          </p>
+    <div className="flex w-full h-full flex-col gap-4">
+      <section className="rounded-2xl border-2 border-slate-800 bg-slate-900 p-6">
+        <div className="flex items-center gap-6">
+          <div className="flex h-20 w-20 items-center justify-center rounded-2xl border-2 border-slate-700 bg-slate-800 text-sky-400">
+            <User size={40} />
+          </div>
+          <div className="space-y-1">
+            <p className="text-xs font-bold tracking-[0.2em] text-amber-500 uppercase">Perfil de Usuario</p>
+            <h1 className="text-3xl font-bold text-white">{username}</h1>
+            <p className="text-sm text-slate-400">ID de Perfil: <span className="font-mono text-slate-200">#{userId}</span></p>
+          </div>
         </div>
       </section>
 
-      <section className="grid gap-4 xl:grid-cols-[minmax(0,1.1fr)_minmax(280px,0.9fr)]">
-        <article className="rounded-2xl border-2 border-slate-800 bg-slate-900 p-4">
-          <h2 className="text-lg font-semibold text-white">Perfil</h2>
-
-          <div className="mt-4 space-y-3">
-            <div className="flex items-center gap-4 rounded-xl bg-slate-800 p-3">
-              <div className="inline-flex h-14 w-14 items-center justify-center rounded-full border-2 border-slate-600 bg-slate-700 text-sky-100">
-                <User size={28} />
-              </div>
-              <div>
-                <p className="text-xs font-bold tracking-widest text-slate-400 uppercase">
-                  Nombre del usuario
-                </p>
-                <p className="text-base font-semibold text-white">Jugador invitado</p>
-              </div>
-            </div>
+      <div className="grid gap-4 md:grid-cols-2 flex-1">
+        
+        <article className="flex flex-col rounded-2xl border-2 border-slate-800 bg-slate-900 p-5">
+          <h2 className="flex items-center gap-2 text-lg font-bold text-white mb-4">
+            <Database size={20} className="text-sky-400" />
+            Estado de Sincronización
+          </h2>
+          <div className="flex flex-1 items-center justify-center rounded-xl bg-slate-950/50 p-4 border border-slate-800">
+            <p className="text-sm text-slate-300 italic text-center">
+              Tus partidas se están guardando automáticamente en la nube.
+            </p>
           </div>
         </article>
 
-        <article className="rounded-2xl border-2 border-slate-800 bg-slate-900 p-4">
-          <h2 className="text-lg font-semibold text-white">Sesión</h2>
-          <p className="mt-1 text-sm text-slate-400">
-            Próximamente integraremos el flujo real de autenticación.
-          </p>
-
+        <article className="flex flex-col rounded-2xl border-2 border-slate-800 bg-slate-900 p-5">
+          <h2 className="text-lg font-bold text-white mb-4">Opciones de Sesión</h2>
           <button
-            type="button"
-            className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full border-2 border-slate-700 bg-slate-800 px-4 py-2 text-sm font-semibold text-sky-100 outline-offset-4 focus:outline-2 focus:outline-amber-400"
+            onClick={handleLogout}
+            className="mt-auto flex w-full items-center justify-center gap-2 rounded-xl border-2 border-red-900/50 bg-red-950/20 px-4 py-3 font-bold text-red-400 transition-colors hover:bg-red-500 hover:text-white"
           >
-            <LogOut size={16} />
+            <LogOut size={20} />
             Cerrar sesión
           </button>
         </article>
-      </section>
+      </div>
     </div>
   );
 }

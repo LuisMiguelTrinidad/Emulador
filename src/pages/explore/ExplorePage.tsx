@@ -1,52 +1,73 @@
-import { ExploreFiltersPanel } from "./components/ExploreFiltersPanel";
+import { useState, useEffect } from "react";
 import { ExploreHeroSection } from "./components/ExploreHeroSection";
 import { ExploreRecommendationsSection } from "./components/ExploreRecommendationsSection";
-import { externalGames, type ExternalSource } from "./data/externalGames";
-import { useMemo, useState } from "react";
+import { fetchExternalGames, Juego } from "../../hooks/api";
 
 export function ExplorePage() {
   const [query, setQuery] = useState("");
-  const [activeSource, setActiveSource] = useState<ExternalSource>("Todas");
+  const [activeSource, setActiveSource] = useState("Todas");
+  const [juegos, setJuegos] = useState<Juego[]>([]);
+  const [loading, setLoading] = useState(false);
+  
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
-  const filteredGames = useMemo(() => {
-    const normalizedQuery = query.trim().toLowerCase();
+  const handleQueryChange = (newQuery: string) => {
+    setQuery(newQuery);
+    setPage(1);
+  };
 
-    return externalGames.filter((game) => {
-      const matchesSource =
-        activeSource === "Todas" || game.source === activeSource;
-      const matchesQuery =
-        normalizedQuery.length === 0 ||
-        [
-          game.title,
-          game.source,
-          game.platform,
-          game.genre,
-          game.downloadLabel,
-          String(game.year),
-        ].some((value) => value.toLowerCase().includes(normalizedQuery));
+  const handleSourceChange = (newSource: string) => {
+    setActiveSource(newSource);
+    setPage(1);
+  };
 
-      return matchesSource && matchesQuery;
-    });
-  }, [activeSource, query]);
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(async () => {
+      setLoading(true);
+      try {
+        const MAPEO_FILTROS: Record<string, string> = {
+          "Todas": "Todas",
+          "GBA": "gba",
+          "DN": "ds",
+          "GC": "gamecube"
+        };
+        
+        const consolaParaBackend = MAPEO_FILTROS[activeSource] || "Todas";
+
+        const resultado = await fetchExternalGames(query, page, consolaParaBackend);
+        
+        setJuegos(resultado.juegos);
+        setTotalPages(resultado.total_paginas || 1);
+      } catch (error) {
+        console.error("Error al buscar juegos:", error);
+      } finally {
+        setLoading(false);
+      }
+    }, 500); 
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [query, activeSource, page]);
 
   return (
     <div className="flex w-full flex-col gap-4">
+      {/* Ya no pasamos onSourceChange ni activeSource aquí */}
       <ExploreHeroSection
         query={query}
-        resultCount={filteredGames.length}
-        onQueryChange={setQuery}
+        resultCount={juegos.length}
+        onQueryChange={handleQueryChange}
       />
 
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1.15fr)_minmax(280px,0.85fr)]">
-        <ExploreRecommendationsSection
-          games={filteredGames}
-          activeSource={activeSource}
-        />
-        <ExploreFiltersPanel
-          activeSource={activeSource}
-          onSourceChange={setActiveSource}
-        />
-      </div>
+      {/* Ahora las opciones de filtrado se envían a los resultados */}
+      <ExploreRecommendationsSection
+        games={juegos}
+        activeSource={activeSource}
+        loading={loading}
+        page={page}
+        totalPages={totalPages}
+        onPageChange={setPage}
+        onSourceChange={handleSourceChange}
+      />
     </div>
   );
 }

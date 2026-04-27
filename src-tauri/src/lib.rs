@@ -1,4 +1,5 @@
 mod controller;
+mod server;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -18,7 +19,15 @@ pub fn run() {
             Ok(())
         })
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![])
+        .plugin(tauri_plugin_websocket::init())
+        .invoke_handler(tauri::generate_handler![
+            server::get_biblioteca,
+            server::get_juegos,
+            server::borrar_juego_cuenta,
+            server::iniciar_juego,
+            server::login,
+            server::register,
+        ])
         .run(tauri::generate_context!())
         .expect("Error en inicio de aplicación Tauri");
 }
