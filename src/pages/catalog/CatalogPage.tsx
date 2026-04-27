@@ -3,7 +3,6 @@ import { CatalogGamesSection } from "./components/CatalogGamesSection";
 import { useBiblioteca } from "../../hooks/useBiblioteca";
 
 export function CatalogPage() {
-  // OJO: Aquí deberías obtener el ID del usuario logueado (ej. de un localStorage)
   const usuarioId = Number(localStorage.getItem("usuario_id")) || 1;
   const { juegos, cargando, error } = useBiblioteca(usuarioId);
 

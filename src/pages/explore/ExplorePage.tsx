@@ -9,19 +9,17 @@ export function ExplorePage() {
   const [juegos, setJuegos] = useState<Juego[]>([]);
   const [loading, setLoading] = useState(false);
   
-  // Nuevos estados para la paginación
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  // Manejadores personalizados para reiniciar la página cuando cambias filtros
   const handleQueryChange = (newQuery: string) => {
     setQuery(newQuery);
-    setPage(1); // Si buscas otra cosa, vuelves a la página 1
+    setPage(1);
   };
 
   const handleSourceChange = (newSource: string) => {
     setActiveSource(newSource);
-    setPage(1); // Si cambias de consola, vuelves a la página 1
+    setPage(1);
   };
 
   useEffect(() => {
@@ -37,11 +35,9 @@ export function ExplorePage() {
         
         const consolaParaBackend = MAPEO_FILTROS[activeSource] || "Todas";
 
-        // Pasamos la página actual a la petición
         const resultado = await fetchExternalGames(query, page, consolaParaBackend);
         
         setJuegos(resultado.juegos);
-        // Actualizamos el total de páginas según lo que diga el backend
         setTotalPages(resultado.total_paginas || 1);
       } catch (error) {
         console.error("Error al buscar juegos:", error);
@@ -51,26 +47,26 @@ export function ExplorePage() {
     }, 500); 
 
     return () => clearTimeout(delayDebounceFn);
-  }, [query, activeSource, page]); // Añadimos 'page' como dependencia del efecto
+  }, [query, activeSource, page]);
 
   return (
     <div className="flex w-full flex-col gap-4">
+      {/* Ya no pasamos onSourceChange ni activeSource aquí */}
       <ExploreHeroSection
         query={query}
         resultCount={juegos.length}
         onQueryChange={handleQueryChange}
-        activeSource={activeSource}
-        onSourceChange={handleSourceChange}
       />
 
+      {/* Ahora las opciones de filtrado se envían a los resultados */}
       <ExploreRecommendationsSection
         games={juegos}
         activeSource={activeSource}
         loading={loading}
-        // Pasamos las nuevas propiedades de paginación
         page={page}
         totalPages={totalPages}
         onPageChange={setPage}
+        onSourceChange={handleSourceChange}
       />
     </div>
   );

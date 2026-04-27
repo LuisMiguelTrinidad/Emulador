@@ -6,10 +6,11 @@ type Props = {
   games: Juego[];
   activeSource: string;
   loading: boolean;
-  // Añadimos las nuevas propiedades
   page: number;
   totalPages: number;
   onPageChange: (newPage: number) => void;
+  // Añadimos onSourceChange aquí
+  onSourceChange: (source: string) => void; 
 };
 
 export function ExploreRecommendationsSection({ 
@@ -18,14 +19,36 @@ export function ExploreRecommendationsSection({
   loading, 
   page, 
   totalPages, 
-  onPageChange 
+  onPageChange,
+  onSourceChange // Lo recibimos por props
 }: Props) {
+  // Lista de fuentes movida aquí
+  const sources = ["Todas", "GBA", "DN", "GC"];
+
   return (
     <section className="rounded-2xl border-2 border-slate-800 bg-slate-900 p-4 min-h-[400px] flex flex-col">
-      <div className="flex items-start justify-between gap-3 border-b border-slate-800 pb-3">
-        <h2 className="text-xl font-semibold text-white">
-          Resultados {activeSource !== "Todas" ? `en ${activeSource}` : "globales"}
+      {/* Ajustamos este div para que el título y el selector estén en la misma línea */}
+      <div className="flex items-center gap-3 border-b border-slate-800 pb-3 flex-wrap">
+        <h2 className="text-xl font-semibold text-white whitespace-nowrap">
+          Resultados en
         </h2>
+        
+        {/* Filtro Estilizado insertado al lado del título */}
+        <div className="flex items-center gap-2 rounded-full bg-slate-800 p-1">
+          {sources.map((source) => (
+            <button
+              key={source}
+              onClick={() => onSourceChange(source)}
+              className={`rounded-full px-4 py-1 text-xs font-bold transition-colors ${
+                activeSource === source
+                  ? "bg-slate-700 text-sky-100 shadow-sm"
+                  : "text-slate-400 hover:text-slate-200"
+              }`}
+            >
+              {source}
+            </button>
+          ))}
+        </div>
       </div>
 
       {loading ? (

@@ -13,7 +13,7 @@ export function CatalogGamesSection({ juegos, cargando }: Props) {
       <div className="flex justify-between gap-4">
         <div className="flex flex-1 gap-1">
           <div className="aspect-square text-slate-400">
-            <Gamepad2 className="h-full w-full p-1" strokeWidth={2} />
+            <Gamepad2 className="h-auto w-auto p-1 flex-0" strokeWidth={2} />
           </div>
           <div className="flex flex-col">
             <p className="text-sm font-bold tracking-widest text-slate-400 uppercase">Biblioteca</p>

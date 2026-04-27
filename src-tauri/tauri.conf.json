@@ -13,7 +13,7 @@
     "windows": [
       {
         "title": "tauri-emulador",
-        "fullscreen": true,
+        "fullscreen": false,
         "resizable": true,
         "decorations": false
       }
